@@ -15,22 +15,21 @@ from keystoneclient.v3 import client as k3client
 
 # Neutron client
 from neutronclient.v2_0 import client as nclient
-
-_keystone_creds = {}
-try:
-    _keystone_creds['username'] = os.environ['OS_USERNAME']
-    _keystone_creds['password'] = os.environ['OS_PASSWORD']
-    _keystone_creds['auth_url'] = os.environ['OS_AUTH_URL']
-    _keystone_creds['tenant_name'] = os.environ['OS_TENANT_NAME']
-except KeyError, e:
-    print ("Openstack environment variable %s is not set!") % e
-    sys.exit(1)
-
+# Instantiate the Keystone client
 # Evaluate the auth URL to determine if user is using v2 or v3 Keystone API
-u = urlparse(_keystone_creds['auth_url'])
+u = urlparse(os.environ['OS_AUTH_URL'])
 
 if "v2.0" in u.path:
     try:
+	_keystone_creds = {}
+	try:
+	    _keystone_creds['username'] = os.environ['OS_USERNAME']
+	    _keystone_creds['password'] = os.environ['OS_PASSWORD']
+	    _keystone_creds['auth_url'] = os.environ['OS_AUTH_URL']
+	    _keystone_creds['tenant_name'] = os.environ['OS_TENANT_NAME']
+	except KeyError, e:
+	    print ("Openstack environment variable %s is not set!") % e
+	    sys.exit(1)
 	auth = v2.Password(**_keystone_creds)
 	sess = session.Session(auth=auth)
 	keystone = k2client.Client(session=sess)
@@ -40,6 +39,17 @@ if "v2.0" in u.path:
         print(unauth.message)
 elif "v3" in u.path:
     try:
+        _keystone_creds = {}
+        try:
+            _keystone_creds['username'] = os.environ['OS_USERNAME']
+            _keystone_creds['password'] = os.environ['OS_PASSWORD']
+            _keystone_creds['auth_url'] = os.environ['OS_AUTH_URL']
+            _keystone_creds['project_name'] = os.environ['OS_PROJECT_NAME']
+	    _keystone_creds['user_domain_id'] = os.environ['OS_USER_DOMAIN_NAME']
+	    _keystone_creds['project_domain_id'] = os.environ['OS_PROJECT_DOMAIN_NAME']
+        except KeyError, e:
+            print ("Openstack environment variable %s is not set!") % e
+            sys.exit(1)
 	auth = v3.Password(**_keystone_creds)
 	sess = session.Session(auth=auth)
 	keystone = k3client.Client(session=sess)
@@ -52,4 +62,7 @@ else:
 
 
 # Instantiate Neutron client
-neutron = nclient.Client(**_keystone_creds)
+try:
+    neutron = nclient.Client(session=sess)
+except:
+    print "Error: Unable to instantiate a Neutron client!"
