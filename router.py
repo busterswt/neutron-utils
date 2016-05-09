@@ -16,16 +16,40 @@ def get_network_l2(network_id):
 
 def build_router_table(args):
 
-
     # Get a list of routers (by ID or all)
     if args.router_id is not None:
         _params = {'id':args.router_id}
         routers = neutron.list_routers(**_params)
+	generic_router_table(routers)
     elif args.tenant_id is not None:
 	_params = {'tenant_id':args.tenant_id}
 	routers = neutron.list_routers(**_params)
+	generic_router_table(routers)
+    elif args.network_id is not None:
+        router_ids = get_routers_by_network(args.network_id)
+	_params = {'id':router_ids}
+	routers = neutron.list_routers(**_params)
+	generic_router_table(routers)
     else:
         routers = neutron.list_routers()
+        generic_router_table(routers)
+
+def get_routers_by_network(network_id):
+    # Return a list of routers connected to the provided network
+
+    # Get external ports
+    external_ports = neutron.list_ports(network_id=network_id,device_owner="network:router_gateway")
+    # Get internal ports
+    internal_ports = neutron.list_ports(network_id=network_id,device_owner="network:router_interface")
+
+    # Combine the list and return all matching router IDs (should be unique?)
+    router_ports = external_ports['ports'] + internal_ports['ports']
+    router_ids = []
+    for port in router_ports:
+	router_ids.append(port['device_id'])
+    return router_ids
+
+def generic_router_table(routers):
 
     ## Print Routers:
     for router in routers['routers']:
@@ -57,6 +81,7 @@ if __name__ == "__main__":
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument('--router-id', type=str, help='Router UUID', required=False, default=None)
     group.add_argument('--tenant-id', type=str, help='Tenant UUID', required=False, default=None)
+    group.add_argument('--network-id', type=str, help='Network UUID', required=False, default=None)
 
     # Array for all arguments passed to script
     args = parser.parse_args()
