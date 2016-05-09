@@ -1,3 +1,33 @@
-neutron-utils
+~= neutron-utils =~
 
 A collection of utilities to make Neutron better.
+
+- router.py -
+
+usage: router.py [-h]
+                 [--router-id ROUTER_ID | --tenant-id TENANT_ID | --network-id NETWORK_ID]
+
+router.py - Utility to show routers and connected networks
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --router-id ROUTER_ID
+                        Provides details for specified router
+  --tenant-id TENANT_ID
+                        Provides details of routers associated with specified
+                        tenant
+  --network-id NETWORK_ID
+                        Provides details of routers connected to specified
+                        network
+
+- float.py -
+
+usage: float.py [-h] [--network-id NETWORK_ID]
+
+float.py - Utility to show floating IP consumption
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --network-id NETWORK_ID
+                        Provides floating IP information for specified
+                        external network
