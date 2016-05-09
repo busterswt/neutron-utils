@@ -56,10 +56,10 @@ if __name__ == "__main__":
     # Build the floating tables
     # (todo) Allow user to specify network ID, tenant ID, or list all networks!
 
-    parser = argparse.ArgumentParser(description='float.py - Utility to show floating IP consumption')
+    parser = argparse.ArgumentParser(description='network.py - Utility to show IP address utilization')
     group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('--network-id', type=str, help='Network UUID', required=False, default=None)
-    group.add_argument('--all', dest='allnetworks', action='store_true', help='Network UUID', required=False)
+    group.add_argument('--network-id', type=str, help='Provides IP address utilization for specified network', required=False, default=None)
+    group.add_argument('--all', dest='allnetworks', action='store_true', help='Provides IP address utilization for all networks (default is external only)', required=False)
     parser.set_defaults(allnetworks=False)
 
     # Array for all arguments passed to script

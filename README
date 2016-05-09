@@ -20,14 +20,13 @@ optional arguments:
                         Provides details of routers connected to specified
                         network
 
-- float.py -
+- network.py -
 
-usage: float.py [-h] [--network-id NETWORK_ID]
-
-float.py - Utility to show floating IP consumption
+network.py - Utility to show IP address utilization
 
 optional arguments:
   -h, --help            show this help message and exit
   --network-id NETWORK_ID
-                        Provides floating IP information for specified
-                        external network
+                        Provides IP address utilization for specified network
+  --all                 Provides IP address utilization for all networks
+                        (default is external only)
