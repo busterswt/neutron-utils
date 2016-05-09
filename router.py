@@ -51,27 +51,28 @@ def get_routers_by_network(network_id):
 
 def generic_router_table(routers):
 
-    ## Print Routers:
+    # Print Routers:
+    table = PrettyTable(["Tenant ID", "Router ID", "Router Name", "Network Name", "Ext", "Type", "Segment ID",  "Network ID"])
     for router in routers['routers']:
-        table = PrettyTable(["Tenant ID", "Router ID", "Router Name", "Network Name", "Ext", "Type", "Segment ID",  "Network ID"])
-
+    
 	# Print router as the first line
-	table.add_row([router['tenant_id'],router['id'],router['name'],"-","-","-","-","-"])
+	table.add_row([router['tenant_id'],router['id'],router['name'],"","","","",""])
 
 	# Check for external network and list here
 	router_gateway_ports = neutron.list_ports(device_id=router['id'],device_owner="network:router_gateway")
 	for port in router_gateway_ports['ports']:
 	    type,segmentation_id = get_network_l2(port['network_id'])
-            table.add_row(["-","-","-",get_network_name(port['network_id']),"***",type,segmentation_id,port['network_id']])
+            table.add_row(["","","",get_network_name(port['network_id']),"***",type,segmentation_id,port['network_id']])
 
 	# Print internal networks 
 	router_interface_ports = neutron.list_ports(device_id=router['id'],device_owner="network:router_interface")
         for port in router_interface_ports['ports']:
 	    type,segmentation_id = get_network_l2(port['network_id'])
-	    table.add_row(["-","-","-",get_network_name(port['network_id']),"-",type,segmentation_id,port['network_id']])
+	    table.add_row(["","","",get_network_name(port['network_id']),"",type,segmentation_id,port['network_id']])
 
-	# Print the table
-        print table
+	table.add_row(["","","","","","","",""])
+    # Print the table
+    print table
 
 
 if __name__ == "__main__":
@@ -79,14 +80,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='router.py - Utility to show routers and connected networks')
     group = parser.add_mutually_exclusive_group(required=False)
-    group.add_argument('--router-id', type=str, help='Router UUID', required=False, default=None)
-    group.add_argument('--tenant-id', type=str, help='Tenant UUID', required=False, default=None)
-    group.add_argument('--network-id', type=str, help='Network UUID', required=False, default=None)
+    group.add_argument('--router-id', type=str, help='Provides details for specified router', required=False, default=None)
+    group.add_argument('--tenant-id', type=str, help='Provides details of routers associated with specified tenant', required=False, default=None)
+    group.add_argument('--network-id', type=str, help='Provides details of routers connected to specified network', required=False, default=None)
 
     # Array for all arguments passed to script
     args = parser.parse_args()
-#    router_id = args.router_id
-
     # Build the table, passing the router_id (if provided)
-#    build_router_table(router_id)
     build_router_table(args)
