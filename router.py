@@ -14,18 +14,22 @@ def get_network_l2(network_id):
     segmentation_id = network_details["network"]["provider:segmentation_id"]
     return type,segmentation_id
 
-def build_router_table(router_id):
+def build_router_table(args):
+
 
     # Get a list of routers (by ID or all)
-    if router_id is not None:
-        _params = {'id':router_id}
+    if args.router_id is not None:
+        _params = {'id':args.router_id}
         routers = neutron.list_routers(**_params)
+    elif args.tenant_id is not None:
+	_params = {'tenant_id':args.tenant_id}
+	routers = neutron.list_routers(**_params)
     else:
         routers = neutron.list_routers()
 
     ## Print Routers:
     for router in routers['routers']:
-        table = PrettyTable(["Tenant ID", "Router ID", "Router Name", "Network Name", "External", "Type", "Segmentation ID",  "Network ID"])
+        table = PrettyTable(["Tenant ID", "Router ID", "Router Name", "Network Name", "Ext", "Type", "Segment ID",  "Network ID"])
 
 	# Print router as the first line
 	table.add_row([router['tenant_id'],router['id'],router['name'],"-","-","-","-","-"])
@@ -50,11 +54,14 @@ if __name__ == "__main__":
     # Build the router tables
 
     parser = argparse.ArgumentParser(description='router.py - Utility to show routers and connected networks')
-    parser.add_argument('--router-id', type=str, help='Router UUID', required=False, default=None)
+    group = parser.add_mutually_exclusive_group(required=False)
+    group.add_argument('--router-id', type=str, help='Router UUID', required=False, default=None)
+    group.add_argument('--tenant-id', type=str, help='Tenant UUID', required=False, default=None)
 
     # Array for all arguments passed to script
     args = parser.parse_args()
-    router_id = args.router_id
+#    router_id = args.router_id
 
     # Build the table, passing the router_id (if provided)
-    build_router_table(router_id)
+#    build_router_table(router_id)
+    build_router_table(args)
