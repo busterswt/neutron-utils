@@ -54,7 +54,7 @@ if __name__ == "__main__":
     # (todo) Allow user to specify network ID, tenant ID, or list all networks!
 
     parser = argparse.ArgumentParser(description='float.py - Utility to show floating IP consumption')
-    parser.add_argument('--network-id', type=str, help='Network UUID', required=False, default=None)
+    parser.add_argument('--network-id', type=str, help='Provides floating IP information for specified external network', required=False, default=None)
 
     # Array for all arguments passed to script
     args = parser.parse_args()
