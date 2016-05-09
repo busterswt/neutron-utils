@@ -16,7 +16,7 @@ def build_float_table(network_id):
 
     # Using returned networks, build a table of subnets and floating info
     for network in networks['networks']:
-        table = PrettyTable(["Tenant ID", "Network ID", "Network Name", "Subnet ID", "CIDR", "Usable IPs", "Total Floating IPs", "Total Other", "Remaining IPs"])
+        table = PrettyTable(["Tenant ID", "Network ID", "Network Name", "Subnet ID", "CIDR", "Usable", "Floating IPs\n In Use", "Other", "Remaining"])
 
 	# Print network as the first line
 	table.add_row([network['tenant_id'],network['id'],network['name'],"-","-","-","-","-","-"])
