@@ -22,6 +22,8 @@ optional arguments:
 
 - network.py -
 
+usage: network.py [-h] [--network-id NETWORK_ID | --all]
+
 network.py - Utility to show IP address utilization
 
 optional arguments:
