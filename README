@@ -30,3 +30,22 @@ optional arguments:
                         Provides IP address utilization for specified network
   --all                 Provides IP address utilization for all networks
                         (default is external only)
+
+- float.py -
+
+usage: float.py [-h]
+                (--floatingip FLOATINGIP | --network-id NETWORK_ID | --fixedip FIXEDIP | --tenant-id TENANT_ID)
+
+float.py - Utility to identify information related to floating IPs
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --floatingip FLOATINGIP
+                        Provides information related to provided floating IP
+  --network-id NETWORK_ID
+                        Provides floating IPs related to provided floating
+                        network ID
+  --fixedip FIXEDIP     Provides floating IPs related to provided fixed ID.
+                        (Warning: May return multiple matches)
+  --tenant-id TENANT_ID
+                        Provides floating IPs related to provided tenant ID.
