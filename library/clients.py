@@ -16,6 +16,10 @@ from keystoneclient.v3 import client as k3client
 # Neutron client
 from neutronclient.v2_0 import client as nclient
 # Instantiate the Keystone client
+
+# Nova client
+from novaclient import client as novaclient
+
 # Evaluate the auth URL to determine if user is using v2 or v3 Keystone API
 u = urlparse(os.environ['OS_AUTH_URL'])
 
@@ -66,3 +70,9 @@ try:
     neutron = nclient.Client(session=sess)
 except:
     print "Error: Unable to instantiate a Neutron client!"
+
+# Instantiate Nova client
+try:
+    nova = novaclient.Client(2,session=sess)
+except:
+    print "Error: Unable to instantiate a Nova client!"
