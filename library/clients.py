@@ -56,7 +56,7 @@ elif "v3" in u.path:
             sys.exit(1)
 	auth = v3.Password(**_keystone_creds)
 	sess = session.Session(auth=auth)
-	keystone = k3client.Client(session=sess)
+	keystone = k3client.Client(session=sess,insecure=True)
     except AuthorizationFailure as auf:
         print(auf.message)
     except Unauthorized as unauth:
@@ -67,12 +67,12 @@ else:
 
 # Instantiate Neutron client
 try:
-    neutron = nclient.Client(session=sess)
+    neutron = nclient.Client(session=sess,insecure=True,endpoint_type='internalURL')
 except:
     print "Error: Unable to instantiate a Neutron client!"
 
 # Instantiate Nova client
 try:
-    nova = novaclient.Client(2,session=sess)
+    nova = novaclient.Client(2,session=sess,insecure=True)
 except:
     print "Error: Unable to instantiate a Nova client!"
