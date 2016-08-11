@@ -36,7 +36,7 @@ if "v2.0" in u.path:
 	    sys.exit(1)
 	auth = v2.Password(**_keystone_creds)
 	sess = session.Session(auth=auth)
-	keystone = k2client.Client(session=sess)
+	keystone = k2client.Client(session=sess,insecure=True)
     except AuthorizationFailure as auf:
         print(auf.message)
     except Unauthorized as unauth:
