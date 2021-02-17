@@ -24,6 +24,7 @@ python3 -m pip install -r requirements.txt
 
 ## router.py
 
+```
 usage: router.py [-h]
                  [--router-id ROUTER_ID | --project-id PROJECT_ID | --network-id NETWORK_ID]
 
@@ -39,6 +40,7 @@ optional arguments:
   --network-id NETWORK_ID
                         Provides details of routers connected to specified
                         network
+```
 
 ### Example
 
@@ -56,6 +58,7 @@ optional arguments:
 
 ## network.py
 
+```
 usage: network.py [-h] [--network-id NETWORK_ID | --all]
 
 network.py - Utility to show IP address utilization
@@ -66,6 +69,7 @@ optional arguments:
                         Provides IP address utilization for specified network
   --all                 Provides IP address utilization for all networks
                         (default is external only)
+```
 
 ### Example
 
@@ -83,6 +87,7 @@ optional arguments:
 
 ## float.py
 
+```
 usage: float.py [-h]
                 (--floatingip FLOATINGIP | --network-id NETWORK_ID | --fixedip FIXEDIP | --project-id PROJECT_ID)
 
@@ -99,6 +104,7 @@ optional arguments:
                         (Warning: May return multiple matches)
   --project-id PROJECT_ID
                         Provides floating IPs related to provided project ID.
+```
 
 ### Example
 
@@ -135,12 +141,11 @@ optional arguments:
 +----------------------------------+------------------+---------------+-----------------+--------------------------------------+--------------------------------------+-------------+--------------------------------------+
 ```
 
-### Warning
-
-The float.py script may take a while to run depending on the size of the network.
+:warning: The float.py script may take a while to run depending on the size of the network.
 
 ## secgrp.py
 
+```
 usage: secgrp.py [-h]
               --instance-uuid INSTANCE_UUID [--src-ip SRC_IP] [--protocol PROTOCOL] [--dst-port DST_PORT] [--direction DIRECTION]
 
@@ -155,6 +160,7 @@ optional arguments:
   --dst-port DST_PORT   Specify destination port (e.g. None (any), 80, 443, 3306). Valid ports are 1:65536. Defaults to None (any).
   --direction DIRECTION
                         Specify direction (e.g. ingress, egress). Defaults to ingress.
+```
 
 ### Example
 
