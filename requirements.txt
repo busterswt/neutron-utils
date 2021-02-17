@@ -1,0 +1,5 @@
+colorama
+debtcollector
+PTable
+python-neutronclient
+python-openstackclient
