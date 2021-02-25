@@ -1,5 +1,7 @@
 BeautifulTable
 debtcollector
+python-keystoneclient
 python-neutronclient
 python-openstackclient
+requests
 termcolor
