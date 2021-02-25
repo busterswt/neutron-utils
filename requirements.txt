@@ -1,5 +1,5 @@
-colorama
+BeautifulTable
 debtcollector
-PTable
 python-neutronclient
 python-openstackclient
+termcolor

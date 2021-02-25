@@ -34,21 +34,28 @@ def get_netmask_from_subnet(subnet_id):
 
     # Print information, mapping integer lists to strings for easy printing
     subnet_mask = ".".join(map(str, mask))
-#    print "Netmask:   " , ".".join(map(str, mask))
     return subnet_mask
 
 def get_ports_from_instance(instance_uuid):
     ports = neutron.list_ports(device_id=instance_uuid)
-#    segmentation_id = network_details["network"]["provider:segmentation_id"]
-#    network_type = network_details["network"]["provider:network_type"]
 
     return ports
 
 def get_security_groups_from_port(port_uuid):
     port_details = neutron.show_port(port_uuid)
     port_security_groups = port_details["port"]["security_groups"]
-#    security_groups = neutron.list_security_groups(port_uuid)
+
     return port_security_groups
+
+def get_security_groups_from_instance(instance_uuid):
+    security_groups = []
+    vm_ports = get_ports_from_instance(instance_uuid)
+    for vm_port in vm_ports["ports"]:
+        port_security_groups = get_security_groups_from_port(vm_port["id"])
+        for port_security_group in port_security_groups:
+            security_groups.append(port_security_group)
+
+    return security_groups
 
 def get_security_group_rules_from_group(rule_args):
     security_group_rules = neutron.list_security_group_rules(security_group_id=rule_args["security_group"],
