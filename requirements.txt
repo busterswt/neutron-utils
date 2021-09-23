@@ -1,5 +1,6 @@
 BeautifulTable
-debtcollector
+#debtcollector
+PrettyTable==0.7.2
 python-keystoneclient
 python-neutronclient
 python-openstackclient

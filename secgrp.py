@@ -12,7 +12,7 @@ from beautifultable import BeautifulTable
 # https://beautifultable.readthedocs.io/en/latest/source/beautifultable.html#beautifultable.BTColumnCollection.padding
 
 # disable tracebacks
-if(os.environ.get('DEBUG')):
+if(os.environ.get('DEBUG')=='1'):
     sys.tracebacklimit = 1
 else:
     sys.tracebacklimit = 0
@@ -48,6 +48,7 @@ def check_source_grp(rule, src_vm):
             return True
 
 def check_source_ip(rule, src_ip):
+# Disable strict to workaround misconfigured sec grp rules
 
     # Source IP can be a fixed, floating, or external IP
     # Test to see if the source ip (n1) overlaps the remote_ip_prefix (n2)
@@ -57,10 +58,16 @@ def check_source_ip(rule, src_ip):
         n2 = ipaddress.ip_network('0.0.0.0/0')
     elif remote_ip_prefix is not None:
         n1 = ipaddress.ip_network(src_ip)
-        n2 = ipaddress.ip_network(remote_ip_prefix)
+        try:
+            n2 = ipaddress.ip_network(remote_ip_prefix)
+            if(n1.overlaps(n2)):
+                return True
+        except:
+            cprint("\nERROR: Invalid remote_ip_prefix %s for rule %s in security group %s. Skipping!" % (rule["remote_ip_prefix"],rule["id"],rule["security_group_id"]), 'yellow')
 
-    if(n1.overlaps(n2)):
-        return True
+#    if(n1.overlaps(n2)):
+#        return True
+
 
 def check_protocol(rule, protocol):
 # Test to see if the protocol is allowed
@@ -78,7 +85,6 @@ def check_protocol(rule, protocol):
 ########################################
 
 if __name__ == "__main__":
-
 ########################################
 ##### Begin Args
 ########################################
@@ -88,6 +94,13 @@ if __name__ == "__main__":
                     " Requires access to OpenStack API."
     )
     group = parser.add_mutually_exclusive_group(required=True)
+    parser.add_argument(
+        "--insecure",
+        type=bool,
+        help="Validate SSL",
+        required=False,
+        default=False,
+    )
     parser.add_argument(
         "--instance-id",
         type=str,
@@ -148,9 +161,12 @@ if __name__ == "__main__":
 ##### End Defaults
 ########################################
 
+    cprint("\nneutron-utils: secgrp -- security group rule checker\n")
+
     # Build the beautiful table
     table = BeautifulTable(maxwidth=180)
     table.columns.header = [
+            "",
             "Security Group ID",
             "Security Group Rule ID",
             "Rule\nType",
@@ -174,6 +190,9 @@ if __name__ == "__main__":
     # Get all security groups for all ports of given instance
     instance_security_groups = neutronlib.get_security_groups_from_instance(args.instance_id)
 
+    if(os.environ.get('DEBUG')=='1'):
+        print(instance_security_groups)
+
     instance_security_group_rules = []
     for instance_security_group in instance_security_groups:
         rule_args = {'security_group': instance_security_group,
@@ -182,14 +201,15 @@ if __name__ == "__main__":
         instance_security_group_rules += neutronlib.get_security_group_rules_from_group(rule_args)["security_group_rules"]
 
     # Iterate through all of the rules for the destination VM
+    row_id = 1
     for rule in instance_security_group_rules:
+        if(os.environ.get('DEBUG')=='1'):
+            print(rule)
+
         # Setup some defaults
         src_ip_allowed = False
         dst_port_allowed = False
         proto_allowed = False
-
-        if(os.environ.get('DEBUG')):
-            print(args)
 
         # Define rule type as 'IP' where remote group is None
         if rule["remote_group_id"] is None:
@@ -260,7 +280,7 @@ if __name__ == "__main__":
                                    str(rule["port_range_max"]).replace('None','any'))
 
         # Check to see if this rule is a match across the board. If so, highlight it.
-        if(os.environ.get('DEBUG')):
+        if(os.environ.get('DEBUG')=='1'):
             print("Src: %s Proto: %s Port: %s" % (src_ip_allowed,proto_allowed,dst_port_allowed))
 
         if(src_ip_allowed and proto_allowed and dst_port_allowed):
@@ -283,6 +303,7 @@ if __name__ == "__main__":
             s_ruleid = rule["id"]
 
         table.rows.append([
+                      row_id,
                       s_groupid,
                       s_ruleid,
                       s_ruletype,
@@ -291,10 +312,9 @@ if __name__ == "__main__":
                       s_proto,
                       s_dstport,
                       ])
-
+        row_id += 1
 
     # Build a short header for the table
-    cprint("\nneutron-utils: secgrp -- security group rule checker\n")
     cprint("Destination (VM): %s" % str(args.instance_id))
     cprint("Source (IP or VM): %s" % source)
     cprint("Protocol: %s" % str(args.protocol).replace('None','any'))

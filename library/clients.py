@@ -24,8 +24,9 @@ except KeyError as e:
     sys.exit(1)
 
 auth = v3.Password(**_keystone_creds)
-sess = ksession.Session(auth=auth)
+sess = ksession.Session(auth=auth,verify=False)
 
-keystone = kclient.Client(session=sess)
-neutron = nclient.Client(session=sess)
-nova = novaclient.Client("2.9", session=sess)
+keystone = kclient.Client(session=sess,insecure=True)
+neutron = nclient.Client(session=sess,insecure=True)
+nova = novaclient.Client("2.9", session=sess,insecure=True)
+
