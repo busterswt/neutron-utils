@@ -1,8 +1,10 @@
 BeautifulTable
 #debtcollector
-PrettyTable==0.7.2
+#PrettyTable==0.7.2
+PrettyTable
 python-keystoneclient
 python-neutronclient
 python-openstackclient
 requests
 termcolor
+colorama
